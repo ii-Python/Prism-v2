@@ -1,0 +1,9 @@
+# Ignore developer settings
+vscode/
+
+# Hide cache
+*.pyc
+__pycache__/
+
+# Hide private information
+.env
