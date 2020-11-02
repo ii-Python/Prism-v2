@@ -1,0 +1,16 @@
+{
+    "color": {
+        "r": 18,
+        "g": 107,
+        "b": 241
+    },
+    "dbl_url": "https://top.gg/bot/685550504276787200",
+    "categories": {
+        "Miscellaneous": {
+            "folder": "misc",
+            "aliases": ["misc"],
+            "description": "Commands that don't fit with the other categories.",
+            "emoji": "confused"
+        }
+    }
+}

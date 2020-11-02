@@ -9,6 +9,7 @@ from prism import Prism, Events
 # Initialization
 load_dotenv()
 
+# Prism initialization
 prism = Prism()
 bot = prism.bot
 
@@ -19,6 +20,9 @@ events = Events(prism)
 async def on_ready():
 
     events.on_ready()
+
+# Load commands
+prism.load_commands()
 
 # Run
 bot.run(getenv("TOKEN"), reconnect = True)
