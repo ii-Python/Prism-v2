@@ -28,18 +28,6 @@ class Help(commands.Cog):
 
         return response[:-2]  # subtract the extra , at the end
 
-    def locate_command(self, command):
-
-        for folder in listdir("commands"):
-
-            for file in listdir(f"commands/{folder}"):  # each file in the category
-
-                if file == command + ".py":  # is it the same
-
-                    return f"commands.{folder}.{command}"  # yea its a valid command and it exists
-
-        return None  # nope sorry
-
     @commands.command(pass_context = True)
     async def help(self, ctx, module = None):
 
@@ -80,7 +68,7 @@ class Help(commands.Cog):
             else:
 
                 # Maybe they typed a command?
-                path = self.locate_command(module)
+                path = self.prism.locate_command(module)
 
                 if not path:
 
@@ -94,11 +82,21 @@ class Help(commands.Cog):
 
                     if issubclass(class_[1], commands.Cog):
 
-                        description = class_[1].__doc__.split(" | ")
+                        description = class_[1].__doc__
+
+                        if "|" in description:
+
+                            description = description.split(" | ")
+
+                            description[1] = " " + description[1]
+
+                        else:
+
+                            description = (description, "")
 
                 embed = discord.Embed(title = module[0].upper() + module[1:], description = description[0], color = self.prism.color)
 
-                embed.add_field(name = "Command Usage", value = f"`{module} {description[1]}`")
+                embed.add_field(name = "Command Usage", value = f"`{module}{description[1]}`")
 
         embed.set_thumbnail(url = self.bot.user.avatar_url)
 
@@ -106,3 +104,8 @@ class Help(commands.Cog):
         embed.set_footer(text = f"| Requested by {ctx.author}.", icon_url = ctx.author.avatar_url)
 
         return await ctx.send(embed = embed)
+
+# Setup function
+def setup(bot):
+
+    bot.add_cog(Help(bot, bot.prism))

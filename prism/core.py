@@ -1,9 +1,6 @@
 # Modules
 import discord
-import inspect
-
 import logging
-import importlib
 
 from os import listdir
 from .config import Config
@@ -27,11 +24,16 @@ class Prism(object):
 
         """Creates a fresh `commands.Bot` instance and maps it to `self.bot`"""
 
+        # Create bot
         bot = commands.Bot(command_prefix = "p!")
 
         bot.remove_command("help")  # the default help command is ugly
 
-        self.bot = bot  # just map the bot
+        # Mapping
+        self.bot = bot
+
+        # Link items to the bot
+        bot.prism = self
 
     def _init_colors(self):
 
@@ -63,18 +65,25 @@ class Prism(object):
 
                 if file.endswith(".py"):  # this prevents pycache from being scanned
 
-                    module = importlib.import_module(f"commands.{category}.{file[:-3]}")
-
-                    for class_ in inspect.getmembers(module, inspect.isclass):
-
-                        if issubclass(class_[1], commands.Cog):  # located the command
-
-                            # begin loading into the bot
-                            self.bot.add_cog(class_[1](self.bot, self))
+                    self.bot.load_extension(f"commands.{category}.{file[:-3]}")
 
     def error(self, text):
 
         """Returns a `discord.Embed` object containing error information"""
 
         return discord.Embed(description = f":x: \t **{text}**", color = 0xFF0000)
+
+    def locate_command(self, command):
+
+        """Attempts to locate a command file, returns `None` if failed"""
+
+        for folder in listdir("commands"):
+
+            for file in listdir(f"commands/{folder}"):  # each file in the category
+
+                if file == command + ".py":  # is it the same
+
+                    return f"commands.{folder}.{command}"  # yea its a valid command and it exists
+
+        return None  # nope sorry
                     
